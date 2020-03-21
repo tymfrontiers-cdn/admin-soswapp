@@ -1,8 +1,8 @@
 {
-    "name": "7os/soswapp",
-    "description": "7 OS Web - App template",
+    "name": "tymfrontiers-cdn/admin-soswapp",
+    "description": "Admin web app for 7 OS",
     "keywords": ["php", "javascript","7","seven","os","web","app"],
-    "homepage": "https://github.com/7os/soswapp",
+    "homepage": "https://github.com/tymfrontiers-cdn/admin-soswapp",
     "type": "library",
     "license": "MIT",
     "authors": [

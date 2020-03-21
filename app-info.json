@@ -1,7 +1,7 @@
 {
-  "name" : "7os/soswapp",
-  "description" : "7 OS Web - app template",
-  "homepage" : "https://github.com/7os/soswapp",
+  "name" : "tymfrontiers-cdn/admin-soswapp",
+  "description" : "Admin Web app for 7 OS",
+  "homepage" : "https://github.com/tymfrontiers-cdn/admin-soswapp",
   "support" : {
     "email" : "dev@tymfrontiers.com",
     "website" : "https://tymfrontiers.com",
