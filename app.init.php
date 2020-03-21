@@ -1,10 +1,10 @@
 <?php
 // load up app settings
 $conf_path = \str_replace([
-  "/vendor/7os/soswapp",
-  "/dev/7os/soswapp",
-  "\\vendor\\7os\\soswapp",
-  "\\dev\\7os\\soswapp",
+  "/vendor/tymfrontiers-cdn/admin-soswapp",
+  "/dev/tymfrontiers-cdn/admin-soswapp",
+  "\\vendor\\tymfrontiers-cdn\\admin-soswapp",
+  "\\dev\\tymfrontiers-cdn\\admin-soswapp",
 ],"",__DIR__);
 $conf_file = $conf_path . "/project-info.json";
 
@@ -22,4 +22,5 @@ $base_include = $conf->PRJ_ROOT;
 if (!\file_exists($base_include)) {
   throw new \Exception("[\"{$base_include}\"]: does not exist, kindly revert to 7 OS Web - app manual.", 1);
 }
-\define('APP_BASE_INC',$base_include . "/base.init.php");
+\define('APP_BASE_INC', $base_include . "/base.init.php");
+\define('APP_ROOT', __DIR__);
