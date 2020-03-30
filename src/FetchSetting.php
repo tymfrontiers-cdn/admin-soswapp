@@ -5,7 +5,7 @@ require_once APP_BASE_INC;
 
 \header("Content-Type: application/json");
 \require_login(false);
-\check_access("/work-domains", false, "project-admin");
+\check_access("/settings", false, "project-admin");
 
 $post = \json_decode( \file_get_contents('php://input'), true); // json data
 $post = !empty($post) ? $post : (
@@ -19,7 +19,8 @@ if ( !$http_auth && ( empty($post['form']) || empty($post['CSRF_token']) ) ){
 }
 $params = $gen->requestParam(
   [
-    "name"          => ["name","username",3,98,[],'LOWER',['-','.']],
+    "id" => ["id","int",1,0],
+    "domain" => ["domain","username",3,72,[],'LOWER',['-','.']],
     "search" => ["search","text",3,25],
     "page" =>["page","int",1,0],
     "limit" =>["limit","int",1,0],
@@ -53,61 +54,65 @@ if( !$http_auth ){
 }
 
 $count = 0;
-$data = new MultiForm(MYSQL_ADMIN_DB, 'work_domain','name');
+$data = new MultiForm(MYSQL_ADMIN_DB, 'setting_option','name');
 $data->current_page = $page = (int)$params['page'] > 0 ? (int)$params['page'] : 1;
 $query =
-"SELECT wd.name, wd.acronym, wd.path, wd.icon, wd.description,
-        (
-          SELECT COUNT(*)
-          FROM :db:.work_path
-          WHERE domain=wd.name
-        ) AS work_paths
- FROM :db:.:tbl: AS wd ";
- $join = "";
+"SELECT sopt.name, sopt.domain, sopt.title, sopt.description,
+        stt.id, stt.skey AS 'key', stt.sval AS 'value', stt._updated
+ FROM :db:.:tbl: AS sopt ";
+ $join = " LEFT JOIN :db:.setting AS stt ON stt.skey = sopt.name AND stt.user = CONCAT('SYSTEM.',sopt.domain) ";
 
 $cond = " WHERE 1=1 ";
-// $cond = " WHERE wd.work_group IN(
-//             SELECT name
-//             FROM :db:.work_group
-//             WHERE `rank` <= {$rank}
-//           ) ";
-if (!empty($params['name'])) {
-  $cond .= " AND wd.name='{$params['name']}' ";
+if (!empty($params['id'])) {
+  $cond .= " AND sopt.name = (
+    SELECT skey FROM :db:.setting
+    WHERE id={$params['id']}
+    LIMIT 1
+  ) ";
 }else{
-  if( !empty($params['search']) ){
+  if (!empty($params['domain'])) {
+    $cond .= " AND sopt.domain='{$params['domain']}' ";
+  } if( !empty($params['search']) ){
     $params['search'] = $db->escapeValue(\strtolower($params['search']));
-    $cond .= " AND LOWER(wd.name) LIKE '%{$params['search']}%' ";
+    $cond .= " AND (
+      sopt.name = '{$params['search']}'
+      OR sopt.domain = '{$params['search']}'
+      OR LOWER(sopt.name) LIKE '%{$params['search']}%'
+      OR LOWER(sopt.title) LIKE '%{$params['search']}%'
+    ) ";
   }
 }
 
-$count = $data->findBySql("SELECT COUNT(*) AS cnt FROM :db:.:tbl: AS wd {$cond} ");
+$count = $data->findBySql("SELECT COUNT(*) AS cnt FROM :db:.:tbl: AS sopt {$cond} ");
 // echo $db->last_query;
 $count = $data->total_count = $count ? $count[0]->cnt : 0;
 
-$data->per_page = $limit = !empty($params['name']) ? 1 : (
+$data->per_page = $limit = !empty($params['id']) ? 1 : (
     (int)$params['limit'] > 0 ? (int)$params['limit'] : 35
   );
 $query .= $join;
 $query .= $cond;
-$sort = " ORDER BY wd.name ";
+$sort = " ORDER BY sopt.name ";
 
 $query .= $sort;
 $query .= " LIMIT {$data->per_page} ";
 $query .= " OFFSET {$data->offset()}";
 
-// echo \str_replace(':tbl:','admin',\str_replace(':db:',ADMIN_DB,$query));
+// echo \str_replace(':tbl:','setting_option',\str_replace(':db:',MYSQL_ADMIN_DB,$query));
 // exit;
 $found = $data->findBySql($query);
 // $tym = new \TymFrontiers\BetaTym;
 
 if( !$found ){
   die( \json_encode([
-    "message" => "No domains found for your query.",
+    "message" => "No setting(s) found for your query.",
     "errors" => [],
     "status" => "0.2"
     ]) );
 }
 // process result
+$tym = new BetaTym;
+$data_obj = new Data;
 $result = [
   'records' => (int)$count,
   'page'  => $data->current_page,
@@ -124,12 +129,16 @@ foreach($found as $k=>$obj){
   unset($found[$k]->per_page);
   unset($found[$k]->total_count);
 
+  @ $found[$k]->id = (int)$found[$k]->id;
+  $found[$k]->min_desc = $data_obj->getLen($found[$k]->description,72);
+  $found[$k]->updated_date = $found[$k]->updated();
+  $found[$k]->updated = !empty($found[$k]->updated()) ? $tym->MDY($found[$k]->updated()) : null;
 }
 
 $result["message"] = "Request completed.";
 $result["errors"] = [];
 $result["status"] = "0.0";
-$result["domains"] = $found;
+$result["settings"] = $found;
 
 echo \json_encode($result);
 exit;

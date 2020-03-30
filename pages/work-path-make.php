@@ -179,9 +179,6 @@ endif;
     }
   }
   (function(){
-    $('input[name=acronym]').blur(function(){
-      $(this).val($(this).val().replaceAll(' ','').toUpperCase());
-    });
     $('textarea.autosize').autosize();
   })();
 </script>
