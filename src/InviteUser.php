@@ -220,7 +220,7 @@ if (!$otp->create()) {
   }
 }
 // register admin
-$user->_id = $data->uniqueRand("", 12, $data::RAND_MIXED_UPPER, false, MYSQL_ADMIN_DB, "user", "_id");
+$user->_id = $data->uniqueRand("", 12, $data::RAND_MIXED_LOWER, false, MYSQL_ADMIN_DB, "user", "_id");
 $user->email = $params["email"];
 $user->phone = $params["phone"];
 $user->name = $params["name"];
