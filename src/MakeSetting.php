@@ -27,7 +27,7 @@ $rqp = [
 ];
 if( $post ):
   if( !empty($post['key']) && !empty($post["domain"]) ){
-    $key_prop = (new MultiForm(MYSQL_ADMIN_DB,'setting_option','id'))
+    $key_prop = (new MultiForm(MYSQL_BASE_DB,'setting_option','id'))
     ->findBySql("SELECT name, type, type_variant, title, description
                  FROM :db:.:tbl:
                  WHERE name='{$database->escapeValue($post['key'])}'
@@ -103,8 +103,8 @@ if( !$http_auth ){
 }
 include PRJ_ROOT . "/src/Pre-Process.php";
 $setting = !$is_new
-  ? (new MultiForm(MYSQL_ADMIN_DB, 'setting', 'id'))->findById($params['id'])
-  : new MultiForm(MYSQL_ADMIN_DB, 'setting', 'id');
+  ? (new MultiForm(MYSQL_BASE_DB, 'setting', 'id'))->findById($params['id'])
+  : new MultiForm(MYSQL_BASE_DB, 'setting', 'id');
 
 if ( !$setting ) {
   echo \json_encode([
@@ -116,7 +116,7 @@ if ( !$setting ) {
 }
 // var_dump($key_prop->type);
 // exit;
-$admin_db = MYSQL_ADMIN_DB;
+$admin_db = MYSQL_BASE_DB;
 $set_user = $database->escapeValue("SYSTEM.{$params["domain"]}");
 $set_skey = $database->escapeValue($params["key"]);
 if ($key_prop->type == "boolean") {

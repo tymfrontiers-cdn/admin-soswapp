@@ -55,7 +55,7 @@ if( !$http_auth ){
 }
 
 $count = 0;
-$data = new MultiForm(MYSQL_ADMIN_DB, 'setting_option','name');
+$data = new MultiForm(MYSQL_BASE_DB, 'setting_option','name');
 $data->current_page = $page = (int)$params['page'] > 0 ? (int)$params['page'] : 1;
 $query =
 "SELECT sopt.id, sopt.name, sopt.domain, sopt.type, sopt.type_variant, sopt.title, sopt.description, sopt._updated
@@ -96,7 +96,7 @@ $query .= $sort;
 $query .= " LIMIT {$data->per_page} ";
 $query .= " OFFSET {$data->offset()}";
 
-// echo \str_replace(':tbl:','setting_option',\str_replace(':db:',MYSQL_ADMIN_DB,$query));
+// echo \str_replace(':tbl:','setting_option',\str_replace(':db:',MYSQL_BASE_DB,$query));
 // exit;
 $found = $data->findBySql($query);
 // $tym = new \TymFrontiers\BetaTym;

@@ -66,7 +66,7 @@ if( !$http_auth ){
   }
 }
 // check for duplicate
-if ($is_new && (new MultiForm(MYSQL_ADMIN_DB, 'setting_option', 'id'))->findBySql("SELECT id FROM :db:.:tbl: WHERE name='{$database->escapeValue($params['name'])}' AND domain='{$database->escapeValue($params['domain'])}' LIMIT 1")){
+if ($is_new && (new MultiForm(MYSQL_BASE_DB, 'setting_option', 'id'))->findBySql("SELECT id FROM :db:.:tbl: WHERE name='{$database->escapeValue($params['name'])}' AND domain='{$database->escapeValue($params['domain'])}' LIMIT 1")){
   echo \json_encode([
     "status" => "3.1",
     "errors" => ["Duplicate value for name/key."],
@@ -76,8 +76,8 @@ if ($is_new && (new MultiForm(MYSQL_ADMIN_DB, 'setting_option', 'id'))->findBySq
 }
 include PRJ_ROOT . "/src/Pre-Process.php";
 $option = !$is_new
-  ? (new MultiForm(MYSQL_ADMIN_DB, 'setting_option', 'id'))->findById($params['id'])
-  : new MultiForm(MYSQL_ADMIN_DB, 'setting_option', 'id');
+  ? (new MultiForm(MYSQL_BASE_DB, 'setting_option', 'id'))->findById($params['id'])
+  : new MultiForm(MYSQL_BASE_DB, 'setting_option', 'id');
 
 if ( !$option ) {
   echo \json_encode([

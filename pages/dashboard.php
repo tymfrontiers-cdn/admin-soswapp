@@ -6,7 +6,7 @@ require_once APP_BASE_INC;
 require_once APP_ROOT . "/src/Helper.php";
 
 \require_login(true);
-\check_access("/dashboard", false, "project-admin");
+\check_access("/dashboard", true, "project-admin");
 
 $navs = [];
 $query = "SELECT wp.name, wp.path, wp.access_rank, wp.access_rank_strict, wp.title,
