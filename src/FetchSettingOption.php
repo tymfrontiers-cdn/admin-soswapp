@@ -58,7 +58,7 @@ $count = 0;
 $data = new MultiForm(MYSQL_BASE_DB, 'setting_option','name');
 $data->current_page = $page = (int)$params['page'] > 0 ? (int)$params['page'] : 1;
 $query =
-"SELECT sopt.id, sopt.name, sopt.domain, sopt.type, sopt.type_variant, sopt.title, sopt.description, sopt._updated
+"SELECT sopt.id, sopt.name, sopt.domain, sopt.multi_val, sopt.type, sopt.type_variant, sopt.title, sopt.description, sopt._updated
  FROM :db:.:tbl: AS sopt ";
  $join = "";
 
@@ -127,6 +127,7 @@ foreach($found as $k=>$obj){
   unset($found[$k]->per_page);
   unset($found[$k]->total_count);
 
+  $found[$k]->multi_val = (bool)$found[$k]->multi_val;
   $found[$k]->min_desc = $data_obj->getLen($found[$k]->description,72);
   $found[$k]->updated_date = $found[$k]->updated();
   $found[$k]->updated = $tym->MDY($found[$k]->updated());

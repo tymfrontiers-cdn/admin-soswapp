@@ -21,6 +21,7 @@ $rqp = [
   "id"    => ["id","int",1,0],
   "name"    => ["name","username",3,32,[],'UPPER',['-','.']],
   "domain"  => ["domain","username",3,128,[],'LOWER',['-','.']],
+  "multi_val"  => ["multi_val","boolean"],
   "type" => ["type","option", \array_keys((new \TymFrontiers\Validator)->validate_type)],
   "type_variant" => ["type_variant","text",5,512],
   "title" => ["title","text",3,52],
@@ -90,6 +91,7 @@ if ( !$option ) {
 foreach ($params as $k=>$v) {
   if (!empty($v)) $option->$k = $v;
 }
+$option->multi_val = (bool)$params['multi_val'] ? 1 : 0;
 if (!$option->save()) {
   $do_errors = [];
 

@@ -10,7 +10,7 @@ require_once APP_ROOT . "/src/Helper.php";
 $gen = new Generic;
 $params = $gen->requestParam([
   "domain"          => ["domain","username",3,98,[],'LOWER',['-','.']],
-  "user"          => ["user","username",3,12],
+  "user"          => ["user","username",3,12,[], "MIXED"],
 ],$_GET,[]);
 ?>
 <!DOCTYPE html>

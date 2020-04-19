@@ -23,7 +23,7 @@ if (!$params || !empty($gen->errors)) {
 }
 if( $params ):
   if( !empty($params['id']) ){
-    $option = (new MultiForm(MYSQL_ADMIN_DB,'setting_option','id'))->findById($params['id']);
+    $option = (new MultiForm(MYSQL_BASE_DB,'setting_option','id'))->findById($params['id']);
 
     if( !$option ){
       $errors[] = "No record found for given ID: [{$params['id']}]";
@@ -115,9 +115,13 @@ endif;
               <textarea name="description" required maxlength="256" minlegth="5" class="autosize" id="description" placeholder="Path description"><?php echo $option ? $option->description : ''; ?></textarea>
             </div>
 
-
-            <div class="grid-6-tablet">
-              <button id="submit-form" type="submit" class="btn blue"> <i class="far fa-save"></i> Save </button>
+            <div class="grid-7-tablet">
+              <b>Multple values can be set?</b> <br>
+              <input type="checkbox" name="multi_val" value="1" <?php echo !$option || ($option && (bool)$option->multi_val) ? "checked" : ""; ?> id="multi-val">
+              <label for="multi-val"> Yes</label>
+            </div>
+            <div class="grid-5-tablet">
+              <button id="submit-form" type="submit" class="btn blue"> <i class="fas fa-save"></i> Save </button>
             </div>
 
             <br class="c-f">

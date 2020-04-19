@@ -112,7 +112,7 @@ if( $user->valExist($params['phone'],'phone') ){
 include PRJ_ROOT . "/src/Pre-Process.php";
 
 $otp_code = Data::uniqueRand('', 12, Data::RAND_MIXED, false);
-$otp_ref = Data::uniqueRand('', 16, Data::RAND_MIXED_LOWER);
+$otp_ref = Data::uniqueRand('', 16, Data::RAND_MIXED_UPPER);
 $otp_qid = NULL;
 $rdt = WHOST . "/dashboard";
 // $otp_expiry = NULL;

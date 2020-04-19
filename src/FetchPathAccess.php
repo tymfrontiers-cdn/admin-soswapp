@@ -19,7 +19,7 @@ if ( !$http_auth && ( empty($post['form']) || empty($post['CSRF_token']) ) ){
 }
 $required = ["user", "domain"];
 $params = [
-    "user"   => ["user","username",3,12],
+    "user"   => ["user","username",3,12, [], "MIXED"],
     "domain" => ["domain","username",3,128,[],'LOWER',['-','.','_']],
 
     "form" => ["form","text",2,55],
