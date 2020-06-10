@@ -102,61 +102,74 @@ if( !$http_auth ){
   }
 }
 include PRJ_ROOT . "/src/Pre-Process.php";
-$setting = !$is_new
-  ? (new MultiForm(MYSQL_BASE_DB, 'setting', 'id'))->findById($params['id'])
-  : new MultiForm(MYSQL_BASE_DB, 'setting', 'id');
 
-if ( !$setting ) {
+// use helper to set value
+try {
+  $is_set = Helper\setting_set_value("SYSTEM", $params["key"], $params["value"], $params["domain"]);
+} catch (\Exception $e) {
   echo \json_encode([
-    "status" => "3.1",
-    "errors" => ["Setting with ID: '{$params['id']}' not found."],
-    "message" => "Request halted."
+    "status" => "4.1",
+    "errors" => [$e->getMessage()],
+    "message" => "Request failed."
   ]);
   exit;
 }
-// var_dump($key_prop->type);
-// exit;
-$admin_db = MYSQL_BASE_DB;
-$set_user = $database->escapeValue("SYSTEM.{$params["domain"]}");
-$set_skey = $database->escapeValue($params["key"]);
-if ($key_prop->type == "boolean") {
-  $set_sval = (bool)$params["value"] ? 1 : 0;
-} else {
-  $set_sval = $database->escapeValue($params["value"]);
-}
-// var_dump($set_sval);
-// var_dump($key_prop->type);
-// exit;
 
-if ($is_new) {
-  $query = "INSERT INTO `{$admin_db}`.`setting` (`user`, `skey`, `sval`) VALUES ('{$set_user}', '{$set_skey}', '{$set_sval}')";
-} else {
-  $query = "UPDATE `{$admin_db}`.setting SET sval='{$set_sval}' WHERE id={$params['id']} LIMIT 1";
-}
-if (!$database->query($query)) {
-  $do_errors = [];
-  $more_errors = (new InstanceError($database,true))->get('',true);
-  if (!empty($more_errors)) {
-    foreach ($more_errors as $method=>$errs) {
-      foreach ($errs as $err){
-        $do_errors[] = $err;
-      }
-    }
-    echo \json_encode([
-      "status" => "4." . \count($do_errors),
-      "errors" => $do_errors,
-      "message" => "Request incomplete."
-    ]);
-    exit;
-  } else {
-    echo \json_encode([
-      "status" => "0.1",
-      "errors" => [],
-      "message" => "Request completed with no changes made."
-    ]);
-    exit;
-  }
-}
+// $setting = !$is_new
+//   ? (new MultiForm(MYSQL_BASE_DB, 'setting', 'id'))->findById($params['id'])
+//   : new MultiForm(MYSQL_BASE_DB, 'setting', 'id');
+//
+// if ( !$setting ) {
+//   echo \json_encode([
+//     "status" => "3.1",
+//     "errors" => ["Setting with ID: '{$params['id']}' not found."],
+//     "message" => "Request halted."
+//   ]);
+//   exit;
+// }
+// // var_dump($key_prop->type);
+// // exit;
+// $admin_db = MYSQL_BASE_DB;
+// $set_user = $database->escapeValue("SYSTEM.{$params["domain"]}");
+// $set_skey = $database->escapeValue($params["key"]);
+// if ($key_prop->type == "boolean") {
+//   $set_sval = (bool)$params["value"] ? 1 : 0;
+// } else {
+//   $set_sval = $database->escapeValue($params["value"]);
+// }
+// // var_dump($set_sval);
+// // var_dump($key_prop->type);
+// // exit;
+//
+// if ($is_new) {
+//   $query = "INSERT INTO `{$admin_db}`.`setting` (`user`, `skey`, `sval`) VALUES ('{$set_user}', '{$set_skey}', '{$set_sval}')";
+// } else {
+//   $query = "UPDATE `{$admin_db}`.setting SET sval='{$set_sval}' WHERE id={$params['id']} LIMIT 1";
+// }
+// if (!$database->query($query)) {
+//   $do_errors = [];
+//   $more_errors = (new InstanceError($database,true))->get('',true);
+//   if (!empty($more_errors)) {
+//     foreach ($more_errors as $method=>$errs) {
+//       foreach ($errs as $err){
+//         $do_errors[] = $err;
+//       }
+//     }
+//     echo \json_encode([
+//       "status" => "4." . \count($do_errors),
+//       "errors" => $do_errors,
+//       "message" => "Request incomplete."
+//     ]);
+//     exit;
+//   } else {
+//     echo \json_encode([
+//       "status" => "0.1",
+//       "errors" => [],
+//       "message" => "Request completed with no changes made."
+//     ]);
+//     exit;
+//   }
+// }
 
 echo \json_encode([
   "status" => "0.0",

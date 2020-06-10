@@ -5,7 +5,7 @@ require_once APP_BASE_INC;
 
 \header("Content-Type: application/json");
 \require_login(false);
-\check_access("/setting-options", false, "project-admin");
+\check_access("/user-dashlists", false, "project-admin");
 
 $post = \json_decode( \file_get_contents('php://input'), true); // json data
 $post = !empty($post) ? $post : (
@@ -19,9 +19,7 @@ if ( !$http_auth && ( empty($post['form']) || empty($post['CSRF_token']) ) ){
 }
 $params = $gen->requestParam(
   [
-    "id" => ["id","int",1,0],
-    "name" => ["name","username",3,32,[],'MIXED',['-','.']],
-    "domain" => ["domain","username",3,72,[],'LOWER',['-','.']],
+    "id"     => ["id","int"],
     "search" => ["search","text",3,25],
     "page" =>["page","int",1,0],
     "limit" =>["limit","int",1,0],
@@ -55,33 +53,30 @@ if( !$http_auth ){
 }
 
 $count = 0;
-$data = new MultiForm(MYSQL_BASE_DB, 'setting_option','name');
+$data = new MultiForm(MYSQL_BASE_DB, 'user_dashlist','id');
 $data->current_page = $page = (int)$params['page'] > 0 ? (int)$params['page'] : 1;
 $query =
-"SELECT sopt.id, sopt.name, sopt.domain, sopt.type, sopt.type_variant, sopt.title, sopt.description, sopt._updated
- FROM :db:.:tbl: AS sopt ";
+"SELECT udl.id, udl.path, udl.icon,
+        udl.onclick, udl.classname, udl.title, udl.subtitle,
+        udl.sort, udl.description, udl._created
+ FROM :db:.:tbl: AS udl ";
  $join = "";
 
 $cond = " WHERE 1=1 ";
 if (!empty($params['id'])) {
-  $cond .= " AND sopt.id={$params['id']} ";
-}else{
-  if (!empty($params['name'])) {
-    $cond .= " AND sopt.name='{$params['name']}' ";
-  } if (!empty($params['domain'])) {
-    $cond .= " AND sopt.domain='{$params['domain']}' ";
-  } if( !empty($params['search']) ){
+  $cond .= " AND udl.id='{$params['id']}' ";
+} else {
+  if( !empty($params['search']) ){
     $params['search'] = $db->escapeValue(\strtolower($params['search']));
     $cond .= " AND (
-      LOWER(sopt.name) = '{$params['search']}'
-      OR LOWER(sopt.domain) = '{$params['search']}'
-      OR LOWER(sopt.name) LIKE '%{$params['search']}%'
-      OR LOWER(sopt.title) LIKE '%{$params['search']}%'
+      udl.id = '{$params['search']}'
+      OR LOWER(udl.title) LIKE '%{$params['search']}%'
+      OR LOWER(udl.`path`) LIKE '%{$params['search']}%'
     ) ";
   }
 }
 
-$count = $data->findBySql("SELECT COUNT(*) AS cnt FROM :db:.:tbl: AS sopt {$cond} ");
+$count = $data->findBySql("SELECT COUNT(*) AS cnt FROM :db:.:tbl: AS udl {$cond} ");
 // echo $db->last_query;
 $count = $data->total_count = $count ? $count[0]->cnt : 0;
 
@@ -90,27 +85,27 @@ $data->per_page = $limit = !empty($params['id']) ? 1 : (
   );
 $query .= $join;
 $query .= $cond;
-$sort = " ORDER BY sopt.title ";
+$sort = " ORDER BY udl.sort ASC ";
 
 $query .= $sort;
 $query .= " LIMIT {$data->per_page} ";
 $query .= " OFFSET {$data->offset()}";
 
-// echo \str_replace(':tbl:','setting_option',\str_replace(':db:',MYSQL_BASE_DB,$query));
+// echo \str_replace(':tbl:','work_path',\str_replace(':db:',MYSQL_BASE_DB,$query));
 // exit;
 $found = $data->findBySql($query);
-// $tym = new \TymFrontiers\BetaTym;
+$tym = new \TymFrontiers\BetaTym;
 
 if( !$found ){
   die( \json_encode([
-    "message" => "No setting -options found for your query.",
+    "message" => "No dashlist found for your query.",
     "errors" => [],
     "status" => "0.2"
     ]) );
 }
 // process result
-$tym = new BetaTym;
-$data_obj = new Data;
+$tym = new \TymFrontiers\BetaTym;
+
 $result = [
   'records' => (int)$count,
   'page'  => $data->current_page,
@@ -127,15 +122,16 @@ foreach($found as $k=>$obj){
   unset($found[$k]->per_page);
   unset($found[$k]->total_count);
 
-  $found[$k]->min_desc = $data_obj->getLen($found[$k]->description,72);
-  $found[$k]->updated_date = $found[$k]->updated();
-  $found[$k]->updated = $tym->MDY($found[$k]->updated());
+  $found[$k]->sort = (int)$found[$k]->sort;
+
+  $found[$k]->created_date = $found[$k]->created();
+  $found[$k]->created = $tym->MDY($found[$k]->created());
 }
 
 $result["message"] = "Request completed.";
 $result["errors"] = [];
 $result["status"] = "0.0";
-$result["options"] = $found;
+$result["dashlists"] = $found;
 
 echo \json_encode($result);
 exit;

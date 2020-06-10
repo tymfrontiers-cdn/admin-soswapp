@@ -120,8 +120,8 @@ endif;
               <input type="checkbox" name="multi_val" value="1" <?php echo !$option || ($option && (bool)$option->multi_val) ? "checked" : ""; ?> id="multi-val">
               <label for="multi-val"> Yes</label>
             </div>
-            <div class="grid-5-tablet">
-              <button id="submit-form" type="submit" class="btn blue"> <i class="fas fa-save"></i> Save </button>
+            <div class="grid-6-tablet">
+              <button id="submit-form" type="submit" class="btn blue"> <i class="far fa-save"></i> Save </button>
             </div>
 
             <br class="c-f">

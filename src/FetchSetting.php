@@ -56,11 +56,12 @@ if( !$http_auth ){
 $count = 0;
 $data = new MultiForm(MYSQL_BASE_DB, 'setting_option','name');
 $data->current_page = $page = (int)$params['page'] > 0 ? (int)$params['page'] : 1;
+$usr_concat = "\\\\SYSTEM";
 $query =
 "SELECT sopt.name, sopt.domain, sopt.title, sopt.description,
         stt.id, stt.skey AS 'key', stt.sval AS 'value', stt._updated
  FROM :db:.:tbl: AS sopt ";
- $join = " LEFT JOIN :db:.setting AS stt ON stt.skey = sopt.name AND stt.user = CONCAT('SYSTEM.',sopt.domain) ";
+ $join = " LEFT JOIN :db:.setting AS stt ON stt.skey = sopt.name AND stt.user = CONCAT(sopt.domain,'{$usr_concat}') ";
 
 $cond = " WHERE 1=1 ";
 if (!empty($params['id'])) {

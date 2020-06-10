@@ -27,14 +27,14 @@ $key_prop = false;
 if( $params ):
   if( !empty($params['key']) && !empty($params["domain"]) ){
     if (!empty($params['id'])) {
-      $set = (new MultiForm(MYSQL_ADMIN_DB,'setting','id'))->findBySql("SELECT id, skey AS 'key', sval AS 'value' FROM :db:.:tbl: WHERE id={$params['id']} LIMIT 1");
+      $set = (new MultiForm(MYSQL_BASE_DB,'setting','id'))->findBySql("SELECT id, skey AS 'key', sval AS 'value' FROM :db:.:tbl: WHERE id={$params['id']} LIMIT 1");
       if (!$set) {
         $errors[] = "No setting record found for ID: {$params['id']}.";
       } else {
         $set = $set[0];
       }
     }
-    $key_prop = (new MultiForm(MYSQL_ADMIN_DB,'setting_option','id'))
+    $key_prop = (new MultiForm(MYSQL_BASE_DB,'setting_option','id'))
     ->findBySql("SELECT name, type, type_variant, title, description
                  FROM :db:.:tbl:
                  WHERE name='{$database->escapeValue($params['key'])}'

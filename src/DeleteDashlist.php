@@ -5,7 +5,7 @@ require_once APP_BASE_INC;
 
 \header("Content-Type: application/json");
 \require_login(false);
-\check_access("/setting", false, "project-admin");
+\check_access("/user-dashlist", false, "project-admin");
 
 $post = \json_decode( \file_get_contents('php://input'), true); // json data
 $post = !empty($post) ? $post : (
@@ -18,7 +18,7 @@ if ( !$http_auth && ( empty($post['form']) || empty($post['CSRF_token']) ) ){
   HTTP\Header::unauthorized (false,'', Generic::authErrors ($auth,"Request [Auth-App]: Authetication failed.",'self',true));
 }
 $rqp = [
-  "id"          => ["id","int",1,0],
+  "id"   => ["id","int"],
   "form" => ["form","text",2,72],
   "CSRF_token" => ["CSRF_token","text",5,1024]
 ];
@@ -55,21 +55,22 @@ if( !$http_auth ){
     exit;
   }
 }
+// die (\var_dump($params));
 include PRJ_ROOT . "/src/Pre-Process.php";
 // run process
-$setting = (new MultiForm(MYSQL_BASE_DB, "setting",'id'))->findById($params['id']);
-if( !$setting ){
+$dash = (new MultiForm(MYSQL_BASE_DB, "user_dashlist",'id'))->findById($params['id']);
+if( !$dash ){
   echo \json_encode([
     "status" => "3.1",
-    "errors" => ["setting with ID ({$params['id']}) not found."],
+    "errors" => ["Dashlist with [id]({$params['id']}) not found.", $database->last_query],
     "message" => "Request halted."
   ]);
   exit;
 }
-if( !$setting->delete() ){
+if( !$dash->delete() ){
   $do_errors = [];
-  $setting->mergeErrors();
-  $more_errors = (new InstanceError($setting))->get('',true);
+  $dash->mergeErrors();
+  $more_errors = (new InstanceError($dash))->get('',true);
   if (!empty($more_errors)) {
     foreach ($more_errors as $method=>$errs) {
       foreach ($errs as $err){
@@ -91,7 +92,6 @@ if( !$setting->delete() ){
     exit;
   }
 }
-
 echo \json_encode([
   "status" => "0.0",
   "errors" => [],
