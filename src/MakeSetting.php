@@ -31,7 +31,7 @@ if( $post ):
     ->findBySql("SELECT name, type, type_variant, title, description
                  FROM :db:.:tbl:
                  WHERE name='{$database->escapeValue($post['key'])}'
-                 AND DOMAIN='{$database->escapeValue($post['domain'])}'
+                 AND domain='{$database->escapeValue($post['domain'])}'
                  LIMIT 1");
    if ($key_prop) {
      $key_prop = $key_prop[0];
