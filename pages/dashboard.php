@@ -30,7 +30,13 @@ $query = "SELECT wp.name, wp.path, wp.access_rank, wp.access_rank_strict, wp.tit
                (
                  SELECT COUNT(*)
                  FROM :db:.path_access
-                 WHERE path_name = CONCAT('project-admin','/')
+                 WHERE path_name = (
+                    SELECT `name`
+                    FROM :db:.work_path
+                    WHERE `domain` = 'project-admin'
+                    AND `path` = '/'
+                    LIMIT 1
+                 )
                  AND user = '{$db->escapeValue($session->name)}'
                ) > 0
              )
@@ -93,10 +99,10 @@ if ($found_nav) {
         <div class="grid-10-tablet grid-8-desktop center-tablet">
           <!-- dashlist -->
           <ul class="dash-list">
-            <?php if ($navs): foreach($navs as $dash){ if($dash['name'] !== 'project-admin/dashboard'){ ?>
+            <?php if ($navs): foreach($navs as $dash){ if($dash['link'] !== THIS_PAGE){ ?>
               <li> <a <?php echo (new \TymFrontiers\Validator)->url($dash['link'],['link','url'])
               ? "href=\"{$dash['link']}\""
-              : "href='javascript:void(0)' onclick=\"{$dash->link}()\"" ?>>
+              : "href='javascript:void(0)' onclick=\"{$dash['link']}()\"" ?>>
               <span class="fa-stack fa-3x">
                 <i class="fas fa-circle fa-stack-2x"></i>
                 <?php echo \str_replace("fas fa-", "fas fa-stack-1x fa-inverse fa-",$dash['icon']); ?>
