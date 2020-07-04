@@ -21,6 +21,7 @@ $rqp = [
   "name"    => ["name","username",3,98,[],'LOWER',['-','.', '_', '/']],
   "domain"  => ["domain","username",3,128,[],'LOWER',['-','.']],
   "path" => ["path","text",1,72],
+  "type" => ["type","option",['READ','ALTER']],
   "title" => ["title","text",3,56],
   "icon" => ["icon","script",3,128],
   "sort" => ["sort","int"],
@@ -44,6 +45,7 @@ if ( empty($post['name'])) {
   $req[] = "domain";
   $req[] = "title";
   $req[] = "path";
+  $req[] = "type";
   $req[] = "access_rank";
   $req[] = "description";
 }

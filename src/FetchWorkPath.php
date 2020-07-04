@@ -58,7 +58,7 @@ $count = 0;
 $data = new MultiForm(MYSQL_ADMIN_DB, 'work_path','name');
 $data->current_page = $page = (int)$params['page'] > 0 ? (int)$params['page'] : 1;
 $query =
-"SELECT wp.name, wp.domain, wp.path, wp.nav_visible, wp.access_rank, wp.icon,
+"SELECT wp.name, wp.domain, wp.path, wp.type, wp.nav_visible, wp.access_rank, wp.icon,
         wp.access_rank_strict, wp.onclick, wp.classname, wp.title,
         wp.sort, wp.description, wp._created,
         wg.name AS min_access

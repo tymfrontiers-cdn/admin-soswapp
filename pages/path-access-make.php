@@ -92,8 +92,13 @@ endif;
 
             <div class="grid-12-tablet">
               <h3>Paths</h3>
-            <?php if ($paths = (new MultiForm(MYSQL_ADMIN_DB,'work_path','name'))
-                ->findBySql("SELECT wp.name,wp.domain,wp.path,wp.`access_rank`, wp.title,wp.icon,wp.description
+            <?php
+              $path_type = [
+                "READ" => [],
+                "ALTER" => []
+              ];
+              if ($paths = (new MultiForm(MYSQL_ADMIN_DB,'work_path','name'))
+                ->findBySql("SELECT wp.name,wp.domain,wp.path, wp.type, wp.`access_rank`, wp.title,wp.icon,wp.description
 
                              FROM :db:.:tbl: AS wp
                              WHERE wp.domain='{$db->escapeValue($params['domain'])}'
@@ -109,7 +114,20 @@ endif;
                                LIMIT 1
                              )")
               ) {
-                foreach($paths as $path) {
+                foreach($paths as $pt) {
+                  $path_type[$pt->type][] = $pt;
+                }
+                echo " <h3>Alter Access</h3>";
+                echo "<p> <i class=\"fas fa-exclamation-triangle\"></i> Can create, change and delete.</p>";
+                foreach($path_type["ALTER"] as $path) {
+                  echo " <input title=\"{$path->description}\" name='path' type='checkbox' id=\"path-{$path->name}\" value=\"{$path->name}\" ";
+                  echo $access && \in_array($path->name,$access) ? 'checked' : '';
+                  echo ">";
+                  echo " <label for=\"path-{$path->name}\" title=\"{$path->description}\">{$path->title} ({$path->path})</label>";
+                  echo " <br>";
+                }
+                echo " <h3>Read Access</h3>";
+                foreach($path_type["READ"] as $path) {
                   echo " <input title=\"{$path->description}\" name='path' type='checkbox' id=\"path-{$path->name}\" value=\"{$path->name}\" ";
                   echo $access && \in_array($path->name,$access) ? 'checked' : '';
                   echo ">";

@@ -10,7 +10,7 @@ $gen = new Generic;
 $path = false;
 $required = [];
 $pre_params = [
-  "name"          => ["name","username",3,128,[],'LOWER',['-','.','/']],
+  "name"          => ["name","username",3,32,[],'LOWER'],
   "domain"          => ["domain","username",3,98,[],'LOWER',['-','.']],
   "callback" => ["callback","username",3,35,[],'MIXED']
 ];
@@ -126,10 +126,17 @@ endif;
               <label for="sort">Sort</label>
               <input type="number" name="sort" id="sort" placeholder="Order pos" value="<?php echo $path ? $path->sort : ''; ?>">
             </div>
-            <div class="grid-6-pgone grid-3-tablet">
+            <div class="grid-6-phone grid-3-tablet">
               <h4 class="margin -mnone">Nav visible</h4>
               <input type="checkbox" id="nav_visible" name="nav_visible" value="1" <?php echo (!$path || ($path && (bool)$path->nav_visible)) ? 'checked' : ''; ?>>
               <label for="nav_visible"> On</label>
+            </div>
+            <div class="grid-5-tablet">
+              <h4 class="margin -mnone">Type (access)</h4>
+              <input type="radio" name="type" value="READ" id="type-READ" <?php echo !$path || $path && $path->type == 'READ' ? 'checked' : ''; ?>>
+              <label for="type-READ">Read</label>
+              <input type="radio" name="type" value="ALTER" id="type-ALTER" <?php echo $path && $path->type == 'ALTER' ? 'checked' : ''; ?>>
+              <label for="type-ALTER">Alter</label>
             </div> <br class="c-f">
             <div class="grid-5-tablet">
               <label for="onclick">OnClick (JS FN)</label>

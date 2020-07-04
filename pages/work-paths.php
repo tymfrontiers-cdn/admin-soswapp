@@ -33,7 +33,7 @@ require_once APP_ROOT . "/src/Helper.php";
     <link rel="stylesheet" href="<?php echo \html_style("base.min.css"); ?>">
   </head>
   <body>
-    <?php \setup_page("project-admin/work-paths", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
+    <?php \setup_page("/admin/work-paths", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
     <?php include PRJ_INC_HEADER; ?>
 
     <section id="main-content">
@@ -179,7 +179,7 @@ require_once APP_ROOT . "/src/Helper.php";
         var html = "";
         $.each(obj, function(i, el) {
           html += "<tr>";
-            html += "<td>";
+            html += `<td>[${el.type}] `;
             html += (
               "<a title='"+el.description+"' href=\"javascript:void(0)\" class='blue' onclick=\"faderBox.url('"+ location.origin +"/admin/work-path-make',{name:'"+el.name+"',callback:'refreshList'},{exitBtn:true});\"> <i class=\"far fa-edit\"></i> "+el.domain+ " " +el.path + "</a>"
             );

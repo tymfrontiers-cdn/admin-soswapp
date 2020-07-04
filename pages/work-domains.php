@@ -34,7 +34,7 @@ require_once APP_ROOT . "/src/Helper.php";
     <link rel="stylesheet" href="<?php echo \html_style("base.min.css"); ?>">
   </head>
   <body>
-    <?php \setup_page("project-admin/work-domains", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
+    <?php \setup_page("/admin/work-domains", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
     <?php include PRJ_INC_HEADER; ?>
 
     <section id="main-content">

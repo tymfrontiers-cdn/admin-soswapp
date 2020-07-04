@@ -90,7 +90,7 @@ if ($found_nav) {
     <link rel="stylesheet" href="<?php echo WHOST . "/admin/assets/css/admin.min.css"; ?>">
   </head>
   <body>
-    <?php \setup_page("project-admin/dashboard", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
+    <?php \setup_page("/admin/dashboard", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
     <?php include PRJ_INC_HEADER; ?>
 
     <section id="main-content">

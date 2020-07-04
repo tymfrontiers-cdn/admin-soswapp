@@ -38,7 +38,7 @@ $params = $gen->requestParam([
     <link rel="stylesheet" href="<?php echo \html_style("base.min.css"); ?>">
   </head>
   <body>
-    <?php \setup_page("project-admin/path-accesses", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
+    <?php \setup_page("/admin/path-accesses", "project-admin", true, PRJ_HEADER_HEIGHT); ?>
     <?php include PRJ_INC_HEADER; ?>
 
     <section id="main-content">
