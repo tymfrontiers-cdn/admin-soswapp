@@ -94,7 +94,7 @@ foreach ($params as $k=>$v) {
 }
 $path->nav_visible = $params['nav_visible'];
 $path->access_rank_strict = $params['access_rank_strict'];
-if (empty($params['name'])) $path->name = "{$params['domain']}{$params['path']}";
+if (empty($params['name'])) $path->name = Data::uniqueRand("",12,Data::RAND_MIXED_LOWER, false);;
 $done = empty($params['name'])
   ? $path->create()
   : $path->update();
